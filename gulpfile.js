@@ -60,7 +60,7 @@ gulp.task('release', function() {
         .pipe(minify({
             ext:{
                 src:'.js',
-                //min:'.js'
+                min:'.min.js'
             }
         }))
         .pipe(gulp.dest('./dist/'))
