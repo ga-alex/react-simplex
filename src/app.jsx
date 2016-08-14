@@ -1,4 +1,4 @@
-import Simplex from "./react-simplex.js";
+import { SimplexConnect } from "./react-simplex.js";
 import { Router, Route, Link, browserHistory, IndexRoute  } from 'react-router'
 import { RouteHandler } from 'react-router'
 

@@ -1,5 +1,3 @@
-import UUID from "uuid";
-
 function SimplexStorage(){
     this.listeners = [];
     this.Storage = {};
@@ -64,12 +62,15 @@ window.Simplex = new SimplexStorage();
 
 
 
-window.SimplexConnect = function(Component, props = [] ) {
+var SimplexConnect = function(Component, props = [] ) {
     if ( !Array.isArray( props ) ){
         console.error( 'SimplexConnect props must be an array' );
         return;
     }
-    const Key = UUID.v4();
+    const Key = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
 
     const Connected = React.createClass({
         getInitialState() {
@@ -106,4 +107,4 @@ window.SimplexConnect = function(Component, props = [] ) {
 
 
 
-export default Simplex;
+export { Simplex, SimplexConnect, SimplexStorage };

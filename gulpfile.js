@@ -4,6 +4,7 @@ var inject          = require('gulp-inject'),
     babelify 	    = require('babelify'),
     source 		    = require('vinyl-source-stream'),
     concat 		    = require('gulp-concat'),
+    babel           = require('gulp-babel'),
     minify          = require('gulp-minify');
 
 
@@ -49,14 +50,14 @@ gulp.task('build', function () {
 
 gulp.task('release', function() {
 
-    browserify({entries: './src/react-simplex.js', extensions: ['.js'], debug: false})
-      .transform('babelify', {presets: ['es2015', 'react']})
-      .bundle()
-      .pipe(source('react-simplex.js'))
+
+    gulp
+      .src('./src/react-simplex.js')
+      .pipe( babel({presets: ['react', 'es2015']}) )
       .pipe(gulp.dest('./dist/'))
       
-    gulp
-      .src('./dist/react-simplex.js')
+    /*gulp
+      .src('./dist/react-simplex.js')*/
         .pipe(minify({
             ext:{
                 src:'.js',
