@@ -1,11 +1,23 @@
 # react-simplex
 React storage
 
-All you need
-1. Define scope
-2. connect React Component to Simplex scopes
-3. Change Simplex scope
-4. Again change :)
+
+Simple Todo List on react & [react-simplex](https://github.com/bumkaka/react-simplex)
+
+[Demo](https://react-simplex.ga-alex.com)
+
+
+# Install:
+```
+npm i --save react-simplex
+```
+```
+import { Simplex, SimplexConnect } from 'react-simplex';
+or
+Simplex = require('react-simplex').Simplex
+SimplexConnect = require('react-simplex').SimplexConnect
+
+```
 
 
 # 1. Use with SimplexConnect.
@@ -129,7 +141,7 @@ Simplex.users = users; //set new scope;
 alternative
 Simplex.set('users', users)
 ```
-7. `Remeber - GET -> CHANGE -> SET. Direct change like Simplex.users.push() does't work as expected, it will be changed in Simplex - but not fire listeners. `
+7. `Remeber - GET -> CHANGE -> SET. Direct change array elements or object propertie like Simplex.users.push() does't work as expected, it will be changed in Simplex - but not fire listeners. `
 
 
 
