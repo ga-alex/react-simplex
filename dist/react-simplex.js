@@ -8,28 +8,34 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+/*jslint node: true*/
+/*jshint esnext : true */
+
 function SimplexStorage() {
     this.listeners = [];
     this.Storage = {};
+    this.sync = {};
 }
 
 SimplexStorage.prototype.get = function (name) {
     return this.Storage[name];
 };
 
-SimplexStorage.prototype.set = function (name) {
+SimplexStorage.prototype.init = function (name) {
     var _this = this,
         _arguments = arguments;
 
-    var scope = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+    var default_value = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+    var sync = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
 
+    this.Storage[name] = default_value;
+    this.sync[name] = sync;
 
     if (!this.hasOwnProperty(name)) {
 
         Object.defineProperty(this, name, {
             set: function set(scope) {
-                _this.Storage[name] = scope;
-                _this.trigger(name, scope);
+                _this.set(name, scope);
             },
             get: function get(prop) {
                 return _this.Storage[_arguments[0]];
@@ -37,21 +43,41 @@ SimplexStorage.prototype.set = function (name) {
         });
     }
 
+    if (sync) {
+        try {
+            var storage_value = JSON.parse(localStorage.getItem('SIMPLEX_' + name));
+            this.Storage[name] = storage_value != undefined && storage_value != null ? storage_value : default_value;
+        } catch (e) {
+            console.error('Simplex: can`t sync data from localStorage for ' + name);
+        }
+    }
+};
+
+SimplexStorage.prototype.set = function (name) {
+    var scope = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
     this.Storage[name] = scope;
-    this.trigger(name, scope);
+
+    if (this.sync[name]) {
+        localStorage.setItem('SIMPLEX_' + name, JSON.stringify(this.Storage[name]));
+    }
+
+    this.trigger(name);
 };
 
 SimplexStorage.prototype.onChange = function (name, callback) {
     this.listeners.push({ name: name, callback: callback });
 };
 
-SimplexStorage.prototype.trigger = function (name, scope) {
+SimplexStorage.prototype.trigger = function (name) {
+    var _this2 = this;
+
     var result = null;
 
     this.listeners.forEach(function (event) {
         if (event.name.indexOf(name) == 0) {
             if (event.callback) {
-                result = event.callback.call(scope, _defineProperty({}, name, scope));
+                result = event.callback.call({}, _defineProperty({}, name, _this2.Storage[name]));
             }
         }
     });
@@ -97,11 +123,11 @@ var SimplexConnect = function SimplexConnect(Component) {
             return DefaultState;
         },
         componentDidMount: function componentDidMount() {
-            var _this2 = this;
+            var _this3 = this;
 
             props.forEach(function (prop) {
                 Simplex.onChange(prop + '.' + Key, function (scope) {
-                    _this2.setState(scope);
+                    _this3.setState(scope);
                 });
             });
         },

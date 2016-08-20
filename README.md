@@ -5,7 +5,7 @@ React storage
 Simple Todo List on react & [react-simplex](https://github.com/bumkaka/react-simplex)
 
 [Demo](http://react-simplex.ga-alex.com)
-
+[Git](https://github.com/bumkaka/react-simplex-example)
 
 # Install:
 ```
@@ -27,7 +27,7 @@ SimplexConnect = require('react-simplex').SimplexConnect
 
 ```javascript
 import { Simplex } from 'react-simplex';
-Simplex.set('user'); //Define some storage scope
+Simplex.init('user',{},true); //Define some storage scope with name 'user', value = {}, synch with localStorage = true
 ```
 
 
@@ -69,7 +69,7 @@ Simplex.user = {
 
 ```javascript
 import { Simplex } from 'react-simplex';
-Simplex.set('user'); //Define some storage scope
+Simplex.init('user', {}, false); //Define some storage scope
 ```
 
 
@@ -123,7 +123,7 @@ Simplex.user = {
 # General
 1. No need actions, dispatchers etc.
 2. Simplex storage will defined in global **by default**
-3. Define new scope before use. **Simplex.set('users')**;
+3. Init new scope before use. **Simplex.init( ScopeName, DefaultValue, SyncWithLocalStorage( ture||false ))**;
 4. **Connect** React Component to Simplex scopes
 ```javascript
 SimplexConnect( Component, ['scope1' , 'scope2', 'scope3' ]) //All described scopes will listen
@@ -141,7 +141,7 @@ Simplex.users = users; //set new scope;
 alternative
 Simplex.set('users', users)
 ```
-7. `Remeber - GET -> CHANGE -> SET. Direct change array elements or object propertie like Simplex.users.push() does't work as expected, it will be changed in Simplex - but not fire listeners. `
+7. `Remeber - GET -> CHANGE -> SET. Direct change array elements or object propertie like Simplex.users.push() does't work as expected, it will be changed in Simplex - but not fire listeners, after that change you must manualy call Simplex.triger( ScopeName )`
 
 
 
@@ -152,3 +152,11 @@ v1.0.1
 
 v1.0.2
 - Fix browserify & publish npm troubles
+
+v1.0.5
+- Rewrite readme.md
+
+v1.0.6
+- Change Simplex.trigger method
+- Add Simplex.init method for scope name
+- Add sync with localStorage
