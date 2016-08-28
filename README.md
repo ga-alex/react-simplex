@@ -13,9 +13,6 @@ npm i --save react-simplex
 ```
 ```
 import { Simplex, SimplexConnect } from 'react-simplex';
-or
-Simplex = require('react-simplex').Simplex
-SimplexConnect = require('react-simplex').SimplexConnect
 
 ```
 
@@ -133,16 +130,39 @@ SimplexConnect( Component, ['scope1' , 'scope2', 'scope3' ]) //All described sco
 4. Simplex.**remove**( scopeName ) - remove listener
 5. Simplex.user = { some object } - will change scope and fire subscribed listeners ( setter )
 6. **For update** scope you need:
+
 ```javascript
+//Update array type storage 
 var users = Simplex.users; //get scope
 users.push{ name: "Bob" }; //change
-Simplex.users = users; //set new scope; 
+Simplex.users = users; //set new scope or Simplex.set('users', users) ; 
 
-alternative
-Simplex.set('users', users)
+
+
+
+//Update object type storage 
+Simplex.user = {
+    name: 'Todo',
+    age: 21,
+    email: 'todo@simplex.com',
+    count: 12
+}
+
+Simplex.update('user',{
+    name: 'Simple todo app'
+});
+
+
+
+Simplex.user:
+{
+    name: 'Simple todo app',
+    age: 21,
+    email: 'todo@simplex.com',
+    count: 12
+}
+
 ```
-7. `Remeber - GET -> CHANGE -> SET. Direct change array elements or object propertie like Simplex.users.push() does't work as expected, it will be changed in Simplex - but not fire listeners, after that change you must manualy call Simplex.triger( ScopeName )`
-
 
 
 ### Versions:
@@ -160,3 +180,8 @@ v1.0.6
 - Change Simplex.trigger method
 - Add Simplex.init method for scope name
 - Add sync with localStorage
+
+v1.0.7
+- Add "update" method for objects
+- Subscribe to any changes
+- Add "SimplexMapToProps" connector to a component
