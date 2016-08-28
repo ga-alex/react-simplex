@@ -200,4 +200,6 @@ v1.0.6
 v1.0.7
 - Add "update" method for objects
 - Subscribe to any changes
+
+v1.1.0
 - Add "SimplexMapToProps" connector to a component
