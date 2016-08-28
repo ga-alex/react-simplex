@@ -123,7 +123,23 @@ Simplex.user = {
 3. Init new scope before use. **Simplex.init( ScopeName, DefaultValue, SyncWithLocalStorage( ture||false ))**;
 4. **Connect** React Component to Simplex scopes
 ```javascript
-SimplexConnect( Component, ['scope1' , 'scope2', 'scope3' ]) //All described scopes will listen
+//connect to a specified scopes
+SimplexConnect( Component, ['scope1' , 'scope2', 'scope3' ]);
+
+
+//connect the entire Simplex to the component through mapToProps function.
+
+SimplexMapToProps( Component, ( state )=>{
+    return {
+        todos: storage.todos,
+        todos_count: storage.todos.length,
+        not_finished_count: storage.todos.filter( ( todo )=>{ 
+                return !todo.done;
+            }).length
+    }
+})
+
+
 ```
 3. Simplex.**onChange**( scopeName, callback( scope ) )
 - scopeName - use namespace, "user.ComponentName","user.ComponentName" + key etc..  When use Simplex.remove( "user.ComponentName" ), will be removed only this listener

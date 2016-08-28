@@ -14,7 +14,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /*jslint node: true*/
 /*jshint esnext : true */
-var GLOBAL_EVENT_NAME = 'SimplexStorage';
+var GLOBAL_EVENT_NAME = 'any';
 
 var SimplexStorage = function () {
     function SimplexStorage() {
@@ -105,18 +105,38 @@ var SimplexStorage = function () {
         value: function trigger() {
             var _this2 = this;
 
-            var name = arguments.length <= 0 || arguments[0] === undefined ? 'SimplexStorage' : arguments[0];
+            var name = arguments.length <= 0 || arguments[0] === undefined ? GLOBAL_EVENT_NAME : arguments[0];
 
             var result = null;
 
             this.listeners.forEach(function (event) {
                 if (event.name.indexOf(name) === 0) {
                     if (event.callback) {
-                        result = event.callback.call({}, _defineProperty({}, name, _this2.Storage[name]));
+                        console.log( name )
+                        if (name == GLOBAL_EVENT_NAME) {
+
+                            result = event.callback.call({}, _this2.Storage);
+                        } else {
+                            result = event.callback.call({}, _defineProperty({}, name, _this2.Storage[name]));
+                        }
                     }
                 }
             });
             return result;
+        }
+    }, {
+        key: 'remove',
+        value: function remove() {
+            var name = arguments.length <= 0 || arguments[0] === undefined ? GLOBAL_EVENT_NAME : arguments[0];
+
+            for (var i in this.listeners) {
+                if (this.listeners[i].name == name) {
+                    delete this.listeners[i];
+                }
+            }
+            this.listeners = this.listeners.filter(function (e) {
+                return e;
+            });
         }
     }]);
 

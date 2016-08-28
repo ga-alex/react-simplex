@@ -1,6 +1,7 @@
 /*jslint node: true*/
 /*jshint esnext : true */
-var GLOBAL_EVENT_NAME = 'SimplexStorage';
+var GLOBAL_EVENT_NAME = 'any';
+
 class SimplexStorage{
     constructor(){
         this.listeners = [];
@@ -71,17 +72,31 @@ class SimplexStorage{
         this.listeners.push( {name: name, callback: callback} );
     }
 
-    trigger( name = 'SimplexStorage'){
+    trigger( name = GLOBAL_EVENT_NAME){
         var result = null;
 
         this.listeners.forEach( (event)=>{
             if ( event.name.indexOf( name ) === 0 ) {
                 if ( event.callback ){
-                    result = event.callback.call({},  { [name]: this.Storage[name] } );
+                    if ( name  == GLOBAL_EVENT_NAME ){
+                        result = event.callback.call({},  this.Storage );
+                    } else {
+                        result = event.callback.call({},  { [name]: this.Storage[name] } );
+                    }
                 }
             }
         });
         return result;
+    }
+
+
+    remove( name = GLOBAL_EVENT_NAME ){
+        for(var i in this.listeners){
+            if ( this.listeners[i].name == name ){
+                delete this.listeners[i];
+            }
+        }
+        this.listeners = this.listeners.filter(function(e){return e;});
     }
 
 }
