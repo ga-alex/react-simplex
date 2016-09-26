@@ -1,9 +1,10 @@
 /*jslint node: true*/
 /*jshint esnext : true */
+/*jslint indent: 4 */
 var GLOBAL_EVENT_NAME = 'any';
 
 class SimplexStorage{
-    constructor(){
+    constructor() {
         this.listeners = [];
         this.Storage = {};
         this.sync = {};
@@ -52,7 +53,6 @@ class SimplexStorage{
         }
 
         this.trigger( name );
-        this.trigger( GLOBAL_EVENT_NAME );
     }
 
     onChange(){
@@ -76,16 +76,17 @@ class SimplexStorage{
         var result = null;
 
         this.listeners.forEach( (event)=>{
-            if ( event.name.indexOf( name ) === 0 ) {
-                if ( event.callback ){
-                    if ( name  == GLOBAL_EVENT_NAME ){
-                        result = event.callback.call({},  this.Storage );
-                    } else {
+            if ( event.callback ){
+                if ( event.name.indexOf( GLOBAL_EVENT_NAME ) === 0 ) {
+                    result = event.callback.call({},  this.Storage );
+                } else {
+                    if ( event.name.indexOf( name ) === 0 ) {
                         result = event.callback.call({},  { [name]: this.Storage[name] } );
                     }
                 }
             }
         });
+
         return result;
     }
 
@@ -161,7 +162,7 @@ function SimplexConnect(Component, props = [] ) {
 
             return DefaultState;
         },
-          
+
         componentDidMount() {
             props.forEach( ( prop )=>{
                 Simplex.onChange( prop + '.' + Key, ( scope )=>{

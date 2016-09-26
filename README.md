@@ -203,3 +203,6 @@ v1.0.7
 
 v1.1.0
 - Add "SimplexMapToProps" connector to a component
+
+v1.1.1
+- fix trigger method
