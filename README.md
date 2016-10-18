@@ -122,14 +122,16 @@ Simplex.user = {
 2. Simplex storage will defined in global **by default**
 3. Init new scope before use. **Simplex.init( ScopeName, DefaultValue, SyncWithLocalStorage( ture||false ))**;
 4. **Connect** React Component to Simplex scopes
+
+
+#####connect to a specified scopes
 ```javascript
-//connect to a specified scopes
 SimplexConnect( Component, ['scope1' , 'scope2', 'scope3' ]);
+```
 
-
-//connect the entire Simplex to the component through mapToProps function.
-
-SimplexMapToProps( Component, ( state )=>{
+#####connect the entire Simplex to the component through SimplexMapToProps function.
+```javascript
+var Component = SimplexMapToProps( Component, ( state, props )=>{
     return {
         todos: storage.todos,
         todos_count: storage.todos.length,
@@ -137,8 +139,21 @@ SimplexMapToProps( Component, ( state )=>{
                 return !todo.done;
             }).length
     }
-})
+});
 
+
+//with route
+var Page = SimplexMapToProps( Page, ( state, props )=>{
+    return {
+        element: storage.elements.filter( ( todo, props )=>{ 
+                return todo.id == props.params.id;
+            })[0]
+    }
+});
+
+...
+<Route path="/detail/:id" components={{page: Page}}/>
+...
 
 ```
 3. Simplex.**onChange**( scopeName, callback( scope ) )
@@ -206,3 +221,6 @@ v1.1.0
 
 v1.1.1
 - fix trigger method
+
+v1.1.2
+- pass component props to SimplexMapToProps  

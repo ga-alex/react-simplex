@@ -14,6 +14,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /*jslint node: true*/
 /*jshint esnext : true */
+/*jslint indent: 4 */
 var GLOBAL_EVENT_NAME = 'any';
 
 var SimplexStorage = function () {
@@ -31,8 +32,8 @@ var SimplexStorage = function () {
             var _this = this,
                 _arguments = arguments;
 
-            var default_value = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
-            var sync = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+            var default_value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+            var sync = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             this.Storage[name] = default_value;
             this.sync[name] = sync;
@@ -71,7 +72,7 @@ var SimplexStorage = function () {
     }, {
         key: 'set',
         value: function set(name) {
-            var scope = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+            var scope = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
             this.Storage[name] = scope;
 
@@ -80,7 +81,6 @@ var SimplexStorage = function () {
             }
 
             this.trigger(name);
-            this.trigger(GLOBAL_EVENT_NAME);
         }
     }, {
         key: 'onChange',
@@ -105,29 +105,28 @@ var SimplexStorage = function () {
         value: function trigger() {
             var _this2 = this;
 
-            var name = arguments.length <= 0 || arguments[0] === undefined ? GLOBAL_EVENT_NAME : arguments[0];
+            var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : GLOBAL_EVENT_NAME;
 
             var result = null;
 
             this.listeners.forEach(function (event) {
-                if (event.name.indexOf(name) === 0) {
-                    if (event.callback) {
-                        console.log( name )
-                        if (name == GLOBAL_EVENT_NAME) {
-
-                            result = event.callback.call({}, _this2.Storage);
-                        } else {
+                if (event.callback) {
+                    if (event.name.indexOf(GLOBAL_EVENT_NAME) === 0) {
+                        result = event.callback.call({}, _this2.Storage);
+                    } else {
+                        if (event.name.indexOf(name) === 0) {
                             result = event.callback.call({}, _defineProperty({}, name, _this2.Storage[name]));
                         }
                     }
                 }
             });
+
             return result;
         }
     }, {
         key: 'remove',
         value: function remove() {
-            var name = arguments.length <= 0 || arguments[0] === undefined ? GLOBAL_EVENT_NAME : arguments[0];
+            var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : GLOBAL_EVENT_NAME;
 
             for (var i in this.listeners) {
                 if (this.listeners[i].name == name) {
@@ -155,13 +154,13 @@ function SimplexMapToProps(Component, MapStorageToPropsFunction) {
     var Connected = React.createClass({
         displayName: 'Connected',
         getInitialState: function getInitialState() {
-            return MapStorageToPropsFunction(Simplex.Storage);
+            return MapStorageToPropsFunction(Simplex.Storage, this.props);
         },
         componentDidMount: function componentDidMount() {
             var _this3 = this;
 
             Simplex.onChange(GLOBAL_EVENT_NAME + '.' + Key, function (scope) {
-                _this3.setState(MapStorageToPropsFunction(Simplex.Storage));
+                _this3.setState(MapStorageToPropsFunction(Simplex.Storage, _this3.props));
             });
         },
         componentWillUnmount: function componentWillUnmount() {
@@ -175,7 +174,7 @@ function SimplexMapToProps(Component, MapStorageToPropsFunction) {
 }
 
 function SimplexConnect(Component) {
-    var props = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+    var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
     if (!Array.isArray(props)) {
         console.error('SimplexConnect props must be an array');
