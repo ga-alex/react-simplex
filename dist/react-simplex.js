@@ -153,9 +153,11 @@ function SimplexMapToProps(Component, MapStorageToPropsFunction) {
 
     var Connected = React.createClass({
         displayName: 'Connected',
-        getInitialState: function getInitialState() {
-            return MapStorageToPropsFunction(Simplex.Storage, this.props);
-        },
+
+        /*getInitialState() {
+            //return MapStorageToPropsFunction( Simplex.Storage, this.props );
+        },*/
+
         componentDidMount: function componentDidMount() {
             var _this3 = this;
 
@@ -167,7 +169,8 @@ function SimplexMapToProps(Component, MapStorageToPropsFunction) {
             Simplex.remove(GLOBAL_EVENT_NAME + '.' + Key);
         },
         render: function render() {
-            return React.createElement(Component, _extends({}, this.props, this.state));
+            var MappedProps = MapStorageToPropsFunction(Simplex.Storage, this.props);
+            return React.createElement(Component, _extends({}, this.props, MappedProps));
         }
     });
     return Connected;

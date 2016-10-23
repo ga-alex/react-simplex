@@ -224,3 +224,6 @@ v1.1.1
 
 v1.1.2
 - pass component props to SimplexMapToProps  
+
+v1.1.3
+- fix pass props on update component

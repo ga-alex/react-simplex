@@ -119,9 +119,6 @@ function SimplexMapToProps( Component, MapStorageToPropsFunction ){
     });
 
     const Connected = React.createClass({
-        getInitialState() {
-            return MapStorageToPropsFunction( Simplex.Storage, this.props );
-        },
 
         componentDidMount() {
             Simplex.onChange( GLOBAL_EVENT_NAME + '.' + Key, ( scope )=>{
@@ -134,11 +131,22 @@ function SimplexMapToProps( Component, MapStorageToPropsFunction ){
         },
 
         render() {
-            return <Component {...this.props} {...this.state} />;
+            var MappedProps = MapStorageToPropsFunction( Simplex.Storage, this.props );
+            return <Component {...this.props} {...MappedProps} />;
         }
     });
     return Connected;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 function SimplexConnect(Component, props = [] ) {
