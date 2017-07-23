@@ -2,23 +2,22 @@
 React storage
 
 
-Simple Todo List on react & [react-simplex](https://github.com/bumkaka/react-simplex)
+ [github](https://github.com/bumkaka/react-simplex)
 
-[Demo](http://react-simplex.ga-alex.com)
-[Git](https://github.com/bumkaka/react-simplex-example)
 
 # Install:
 ```
 npm i --save react-simplex
 ```
 ```
-import { Simplex, SimplexConnect } from 'react-simplex';
+import { Simplex, SimplexConnect, SimplexMapToProps } from 'react-simplex';
+Simplex.init('user',{},true);
+Simplex.init('todos',{},true);
 
 ```
 
 
-# 1. Use with SimplexConnect.
-
+# 1. SimplexConnect
 
 ### App.js
 
@@ -31,36 +30,34 @@ Simplex.init('user',{},true); //Define some storage scope with name 'user', valu
 ### UserInfo.jsx - react component
 ```javascript
 import { SimplexConnect } from 'react-simplex';
-var UserInfo = React.createClass({
-    getInitialState() {
-        return this.props;
-    },
+import React from 'react'
 
-    render(){
-        return(
-            <div>
-                <span>{ this.props.user.login }</span>
-                <span>{ this.props.user.name }</span>
-            </div>
-        );
-    }
-});
-UserInfo = SimplexConnect( UserInfo, ['user'] );  //Connect component UserInfo to Simplex user scope
-export default UserInfo;
+class UserInfo extends React.Component{
+  render(){
+    return(
+      <div>
+        <span>{ this.props.user.login }</span>
+        <span>{ this.props.user.name }</span>
+      </div>
+    );
+  }
+};
+
+export default SimplexConnect( UserInfo, ['user'] );  //Connect component UserInfo to Simplex user scope
 ```
 
 
-### Execute to make effect
+### Change storage
 
 ```javascript
 Simplex.user = {
-    name: 'Alex',
-    login: 'Bumkaka'
+  name: 'Alex',
+  login: 'Bumkaka'
 }
 ```
 
 
-# 1. Manual use.
+# 2. SimplexMapToProps
 
 ## App.js
 
@@ -70,90 +67,82 @@ Simplex.init('user', {}, false); //Define some storage scope
 ```
 
 
-##UserInfo react component
+## Todos.jsx
 ```javascript
-import { SimplexConnect } from 'react-simplex';
+import { SimplexMapToProps } from 'react-simplex';
 
-var UserInfo = React.createClass({
-    getInitialState() {
-        return {
-            user: Simplex.user     //Set default state from Simplex user scope
-        }
-    },
-
-    componentDidMount: function(){
-        Simplex.onChange( 'user.UserInfo',  ( scope ) => {      //Subscribe to simlex scope with namespace
-            this.setState( scope );
-        });
-    },
-    
-    componentWillUnmount: function() {
-        Simplex.remove( 'user.UserInfo' );  //Unsubscribe from simplex scope
-    },
-    
-    render(){
-        return(
-            <div>
-                <span>{ this.props.user.login }</span>
-                <span>{ this.props.user.name }</span>
-            </div>
-        );
-    }
+class Todos extends React.Component{
+  render(){
+    return(
+      <div>
+        <span>{ this.props.user.login }</span>
+        <span>{ this.props.user.name }</span>
+      </div>
+    );
+  }
 });
 
-UserInfo = SimplexConnect( UserInfo, ['user'] );  //Connect component UserInfo to Simplex user scope
-
-export default UserInfo;
+export default SimplexMapToProps( Component, ( storage, current_props )=>{
+  return {
+    todos: storage.todos,
+    todos_count: storage.todos.length,
+    not_finished_count: storage.todos.filter( ( todo )=>{
+            return !todo.done;
+        }).length
+  }
+});
 ```
 
 
-### Execute to make effect
+### Change storage
 
 ```javascript
 Simplex.user = {
-    name: 'Alex',
-    login: 'Bumkaka'
+  name: 'Alex',
+  login: 'Bumkaka'
 }
-
+or
+Simplex.set('user', {
+  name: 'Alex',
+  login: 'Bumkaka'
+})
 ```
 
 # General
-1. No need actions, dispatchers etc.
-2. Simplex storage will defined in global **by default**
-3. Init new scope before use. **Simplex.init( ScopeName, DefaultValue, SyncWithLocalStorage( ture||false ))**;
-4. **Connect** React Component to Simplex scopes
+1. import Simplex and connector
+2. Init new scope. **Simplex.init( ScopeName, DefaultValue, SyncWithLocalStorage[ ture||false ] )**;
+3. **Connect** React Component to Simplex scopes by SimplexConnect or SimplexMapToProps
 
 
-#####connect to a specified scopes
+##### connect by SimplexConnect
 ```javascript
 SimplexConnect( Component, ['scope1' , 'scope2', 'scope3' ]);
 ```
 
-#####connect the entire Simplex to the component through SimplexMapToProps function.
+##### connect by SimplexMapToProps.
 ```javascript
-var Component = SimplexMapToProps( Component, ( state, props )=>{
-    return {
-        todos: storage.todos,
-        todos_count: storage.todos.length,
-        not_finished_count: storage.todos.filter( ( todo )=>{ 
-                return !todo.done;
-            }).length
-    }
+var Component = SimplexMapToProps( Component, ( storage, current_props )=>{
+  return {
+    todos: storage.todos,
+    todos_count: storage.todos.length,
+    not_finished_count: storage.todos.filter( ( todo )=>{
+            return !todo.done;
+        }).length
+  }
 });
 
 
 //with route
+<Route path="/todo_detail/:id" components={{page: Page}}/>
+...
+...
 var Page = SimplexMapToProps( Page, ( state, props )=>{
-    return {
-        element: storage.elements.filter( ( todo, props )=>{ 
-                return todo.id == props.params.id;
-            })[0]
-    }
+  return {
+    element: storage.todos.filter( ( todo, props )=>{
+      return todo.id == props.params.id;
+    })[0]
+  }
 });
-
-...
-<Route path="/detail/:id" components={{page: Page}}/>
-...
 
 ```
 3. Simplex.**onChange**( scopeName, callback( scope ) )
@@ -163,37 +152,34 @@ var Page = SimplexMapToProps( Page, ( state, props )=>{
 6. **For update** scope you need:
 
 ```javascript
-//Update array type storage 
+//Update array type storage
 var users = Simplex.users; //get scope
 users.push{ name: "Bob" }; //change
-Simplex.users = users; //set new scope or Simplex.set('users', users) ; 
+Simplex.users = users;
+or
+Simplex.set('users', users) ;
+
+//you can use to update all components
+Simplex.trigger();
 
 
 
 
-//Update object type storage 
+
+//Update specific key object type storage
 Simplex.user = {
-    name: 'Todo',
-    age: 21,
-    email: 'todo@simplex.com',
-    count: 12
+  name: 'Daniel',
+  age: 21,
+  email: 'todo@simplex.com',
+  count: 12
 }
 
 Simplex.update('user',{
-    name: 'Simple todo app'
+  name: 'Alex'
 });
-
-
-
-Simplex.user:
-{
-    name: 'Simple todo app',
-    age: 21,
-    email: 'todo@simplex.com',
-    count: 12
-}
-
 ```
+
+
 
 
 ### Versions:
@@ -227,3 +213,9 @@ v1.1.2
 
 v1.1.3
 - fix pass props on update component
+
+v1.2.0
+- add support React Native
+- add tests
+- now components re-render only if subscribed data will be changed
+- ES6
