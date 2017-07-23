@@ -219,3 +219,6 @@ v1.2.0
 - add tests
 - now components re-render only if subscribed data will be changed
 - ES6
+
+v1.2.1
+-fix AsyncStorage integration

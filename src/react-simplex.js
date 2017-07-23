@@ -13,11 +13,7 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
   });
 
   const isNode = ()=>{
-    try{
-      return window ? false : true;
-    } catch(e){
-      return true;
-    }
+    return module !== 'undefined' && module.exports ? true : false;
   };
 
   let React = isNode() ? global.React : window.React;
@@ -39,7 +35,7 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
         }
         getItem( name, callback ){
           if ( callback ){
-            callback( this.store[name] );
+            callback( {}, this.store[name] );
           } else {
             return this.store[name];
           }
@@ -83,18 +79,14 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
           let storage_value = null;
 
           if ( isNode() ){
-            Storage.getItem( 'SIMPLEX_' + name, ( result )=>{
+            Storage.getItem( 'SIMPLEX_' + name, ( err, result )=>{
               storage_value = JSON.parse( result );
-              this.Storage[name] = storage_value !== undefined && storage_value !== null ? storage_value : default_value;
+              this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
             } );
-
           } else {
             storage_value = JSON.parse( Storage.getItem( 'SIMPLEX_' + name ) );
-            this.Storage[name] = storage_value !== undefined && storage_value !== null ? storage_value : default_value;
+            this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
           }
-
-          //let storage_value = JSON.parse( localStorage.getItem( 'SIMPLEX_' + name ) );
-          //this.Storage[name] = storage_value !== undefined && storage_value !== null ? storage_value : default_value;
         } catch(e){
           console.error('Simplex: can`t sync data from localStorage for ' + name);
         }

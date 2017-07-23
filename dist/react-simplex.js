@@ -37,11 +37,7 @@ var _ref = function () {
   });
 
   var isNode = function isNode() {
-    try {
-      return window ? false : true;
-    } catch (e) {
-      return true;
-    }
+    return module !== 'undefined' && module.exports ? true : false;
   };
 
   var React = isNode() ? global.React : window.React;
@@ -66,7 +62,7 @@ var _ref = function () {
           key: 'getItem',
           value: function getItem(name, callback) {
             if (callback) {
-              callback(this.store[name]);
+              callback({}, this.store[name]);
             } else {
               return this.store[name];
             }
@@ -124,17 +120,14 @@ var _ref = function () {
             var storage_value = null;
 
             if (isNode()) {
-              Storage.getItem('SIMPLEX_' + name, function (result) {
+              Storage.getItem('SIMPLEX_' + name, function (err, result) {
                 storage_value = JSON.parse(result);
-                _this.Storage[name] = storage_value !== undefined && storage_value !== null ? storage_value : default_value;
+                _this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
               });
             } else {
               storage_value = JSON.parse(Storage.getItem('SIMPLEX_' + name));
-              this.Storage[name] = storage_value !== undefined && storage_value !== null ? storage_value : default_value;
+              this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
             }
-
-            //let storage_value = JSON.parse( localStorage.getItem( 'SIMPLEX_' + name ) );
-            //this.Storage[name] = storage_value !== undefined && storage_value !== null ? storage_value : default_value;
           } catch (e) {
             console.error('Simplex: can`t sync data from localStorage for ' + name);
           }
