@@ -63,7 +63,7 @@ Simplex.user = {
 
 ```javascript
 import { Simplex } from 'react-simplex';
-Simplex.init('user', {}, false); //Define some storage scope
+Simplex.init('todos', [], false); //Define some storage scope
 ```
 
 
@@ -75,8 +75,13 @@ class Todos extends React.Component{
   render(){
     return(
       <div>
-        <span>{ this.props.user.login }</span>
-        <span>{ this.props.user.name }</span>
+        <span>{ this.props.todos_count } / { this.props.not_finished_count }</span>
+		
+		{ 
+		  this.props.todos.map( ( todo, i)=>{
+			return <div key={i}>{ todo.title }</div>
+		  })
+		}
       </div>
     );
   }
@@ -97,15 +102,21 @@ export default SimplexMapToProps( Component, ( storage, current_props )=>{
 ### Change storage
 
 ```javascript
-Simplex.user = {
-  name: 'Alex',
-  login: 'Bumkaka'
-}
+Simplex.todos = [
+	{title: 'tests'},
+	{title: 'fix'},
+	{title: 'update readme'},
+	{title: 'update version'},
+	{title: 'publish'}
+]
 or
-Simplex.set('user', {
-  name: 'Alex',
-  login: 'Bumkaka'
-})
+Simplex.set('todos', [
+	{title: 'tests'},
+	{title: 'fix'},
+	{title: 'update readme'},
+	{title: 'update version'},
+	{title: 'publish'}
+])
 ```
 
 # General
@@ -138,8 +149,8 @@ var Component = SimplexMapToProps( Component, ( storage, current_props )=>{
 ...
 var Page = SimplexMapToProps( Page, ( state, props )=>{
   return {
-    element: storage.todos.filter( ( todo, props )=>{
-      return todo.id == props.params.id;
+    element: storage.todos.filter( ( todo )=>{
+      return todo.id == props.some_component_props_id;
     })[0]
   }
 });
@@ -221,4 +232,8 @@ v1.2.0
 - ES6
 
 v1.2.1
--fix AsyncStorage integration
+- fix AsyncStorage integration
+
+v.1.2.2 
+- fix readme
+- move react-native & react dependencies to devDependencies
