@@ -13,7 +13,7 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
   });
 
   const isNode = ()=>{
-    return module !== 'undefined' && module.exports ? true : false;
+    return typeof window === 'undefined';
   };
 
   let React = isNode() ? global.React : window.React;
@@ -27,7 +27,8 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
   let Storage = null;
   if ( isNode() ){
     try{
-      Storage = require('react-native').AsyncStorage;
+	  let rn = "react-native"; //avoid browserify error on non react-native projects
+      Storage = require( rn ).AsyncStorage;
     }catch(e){
       class StoragePolyFill {
         constructor(){
@@ -85,7 +86,7 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
             } );
           } else {
             storage_value = JSON.parse( Storage.getItem( 'SIMPLEX_' + name ) );
-            this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
+            this.Storage[name] = storage_value !==null ? storage_value : default_value;
           }
         } catch(e){
           console.error('Simplex: can`t sync data from localStorage for ' + name);

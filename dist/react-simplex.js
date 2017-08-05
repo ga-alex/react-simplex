@@ -37,7 +37,7 @@ var _ref = function () {
   });
 
   var isNode = function isNode() {
-    return module !== 'undefined' && module.exports ? true : false;
+    return typeof window === 'undefined';
   };
 
   var React = isNode() ? global.React : window.React;
@@ -49,7 +49,8 @@ var _ref = function () {
   var Storage = null;
   if (isNode()) {
     try {
-      Storage = require('react-native').AsyncStorage;
+      var rn = "react-native"; //avoid browserify error on non react-native projects
+      Storage = require(rn).AsyncStorage;
     } catch (e) {
       var StoragePolyFill = function () {
         function StoragePolyFill() {
@@ -126,7 +127,7 @@ var _ref = function () {
               });
             } else {
               storage_value = JSON.parse(Storage.getItem('SIMPLEX_' + name));
-              this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
+              this.Storage[name] = storage_value !== null ? storage_value : default_value;
             }
           } catch (e) {
             console.error('Simplex: can`t sync data from localStorage for ' + name);

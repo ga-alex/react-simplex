@@ -234,6 +234,12 @@ v1.2.0
 v1.2.1
 - fix AsyncStorage integration
 
-v.1.2.2 
+v1.2.2 
 - fix readme
 - move react-native & react dependencies to devDependencies
+
+v1.2.3
+- fix non react-native project browserify error
+v1.2.4
+- improve isNode detection
+- fix default state
