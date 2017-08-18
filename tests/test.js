@@ -1,6 +1,7 @@
-/*jshint esnext : true */
+/* jshint esnext : true */
 
 import React from 'react';
+
 import { mount, shallow } from 'enzyme';
 import {expect} from 'chai';
 
@@ -13,6 +14,7 @@ const defaults = {
     c:0
   }
 };
+
 let testsUtils = JSON.parse(JSON.stringify(defaults));
 
 
@@ -38,10 +40,11 @@ global.document = global.window.document;
 
 
 
-
+//Simplex.setStorageDriver( AsyncStorage, true )
 Simplex.init('data1', '', false);
 Simplex.init('data2', '', false);
 Simplex.init('data3', '', true);
+
 
 
 
@@ -322,3 +325,26 @@ describe("Test trigger", function () {
 
 
 });
+/*
+
+describe("Test trigger", function () {
+	before(function() {
+      //Simplex.reset()
+      resetRenderCount();
+      Simplex.trigger();
+    });
+
+	it("should be true", function () {
+      expect( testsUtils.getPropsComponentA() ).to.deep.equal( { data1: null, data2: null, data3: null });
+    });
+
+	it("should be true", function () {
+      expect( testsUtils.getPropsComponentB() ).to.deep.equal( { data1: null, data2: null, data3: null });
+    });
+
+	it("should be true", function () {
+      expect( testsUtils.getPropsComponentC() ).to.deep.equal( { data1: null, data2: null, data3: null });
+    });
+
+});
+*/

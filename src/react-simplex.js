@@ -1,8 +1,27 @@
-/*jslint node: true*/
-/*jshint esnext : true */
-/*jslint indent: 2 */
+/* jslint node: true */
+/* jshint esnext : true */
+/* jslint indent: 2 */
 import _ from 'underscore';
 const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = ( () => {
+
+class StoragePolyFill {
+	constructor(){
+	  this.storage = {};
+	}
+	getItem( name, callback ){
+	  if ( callback ){
+		callback( {}, this.storage[name] );
+	  } else {
+		return this.storage[name];
+	  }
+	}
+	setItem( name, value, callback ){
+	  this.storage[name] = value;
+		if ( callback ){
+			callback();
+	  }
+	}
+}
 
 
   var GLOBAL_EVENT_NAME = 'any';
@@ -24,43 +43,21 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
 
 
 
-  let Storage = null;
-  if ( isNode() ){
-    try{
-	  let rn = "react-native"; //avoid browserify error on non react-native projects
-      Storage = require( rn ).AsyncStorage;
-    }catch(e){
-      class StoragePolyFill {
-        constructor(){
-          this.store = {};
-        }
-        getItem( name, callback ){
-          if ( callback ){
-            callback( {}, this.store[name] );
-          } else {
-            return this.store[name];
-          }
-        }
-        setItem( name, value, callback ){
-          this.store[name] = value;
-        }
-      }
-      Storage = new StoragePolyFill();
-    }
-  } else {
-    Storage = localStorage;
-  }
-
-
 
   class SimplexStorage{
     constructor() {
       this.listeners = [];
       this.Storage = {};
       this.sync = {};
+			this.setStorageDriver( new StoragePolyFill() )
     }
+    setStorageDriver (storageDriver, _async = false) {
+			this.driverAsync = _async;
+			this.driver = storageDriver;
+		}
 
     init( name, default_value = [], sync = false ) {
+
       this.Storage[name] = default_value;
       this.sync[name] = sync;
 
@@ -79,15 +76,16 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
         try {
           let storage_value = null;
 
-          if ( isNode() ){
-            Storage.getItem( 'SIMPLEX_' + name, ( err, result )=>{
+					if (this.driverAsync) {
+						this.driver.getItem( 'SIMPLEX_' + name, ( err, result )=>{
               storage_value = JSON.parse( result );
               this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
-            } );
-          } else {
-            storage_value = JSON.parse( Storage.getItem( 'SIMPLEX_' + name ) );
+							Simplex.trigger();
+            });
+					} else {
+						storage_value = JSON.parse( this.driver.getItem( 'SIMPLEX_' + name ) );
             this.Storage[name] = storage_value !==null ? storage_value : default_value;
-          }
+					}
         } catch(e){
           console.error('Simplex: can`t sync data from localStorage for ' + name);
         }
@@ -106,19 +104,18 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
 
     set( name, scope = [] ){
       this.Storage[ name ] = scope;
-
       if ( this.sync[name] ) {
-
-        if ( isNode() ){
-          Storage.setItem( 'SIMPLEX_' + name, JSON.stringify( this.Storage[name] ), ()=>{} );
+        if (this.driverAsync) {
+          this.driver.setItem( 'SIMPLEX_' + name, JSON.stringify(this.Storage[name]), () => {
+						this.trigger(name);
+					});
         } else {
-          Storage.setItem( 'SIMPLEX_' + name, JSON.stringify( this.Storage[name] ) );
+          this.driver.setItem('SIMPLEX_' + name, JSON.stringify(this.Storage[name]));
+					this.trigger(name);
         }
-
-        //localStorage.setItem( 'SIMPLEX_' + name, JSON.stringify( this.Storage[name] ) );
-      }
-
-      this.trigger( name );
+      } else {
+				this.trigger(name);
+			}
     }
 
     onChange(){
@@ -255,7 +252,7 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
     return Connected;
   }
 
-  return {Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage};
+  return {Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage:Simplex.driver};
 })();
 
 export { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage };

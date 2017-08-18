@@ -7,9 +7,9 @@ exports.Storage = exports.SimplexMapToProps = exports.SimplexStorage = exports.S
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*jslint node: true*/
-/*jshint esnext : true */
-/*jslint indent: 2 */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* jslint node: true */
+/* jshint esnext : true */
+/* jslint indent: 2 */
 
 
 var _underscore = require('underscore');
@@ -27,6 +27,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _ref = function () {
+  var StoragePolyFill = function () {
+    function StoragePolyFill() {
+      _classCallCheck(this, StoragePolyFill);
+
+      this.storage = {};
+    }
+
+    _createClass(StoragePolyFill, [{
+      key: 'getItem',
+      value: function getItem(name, callback) {
+        if (callback) {
+          callback({}, this.storage[name]);
+        } else {
+          return this.storage[name];
+        }
+      }
+    }, {
+      key: 'setItem',
+      value: function setItem(name, value, callback) {
+        this.storage[name] = value;
+        if (callback) {
+          callback();
+        }
+      }
+    }]);
+
+    return StoragePolyFill;
+  }();
 
   var GLOBAL_EVENT_NAME = 'any';
 
@@ -46,44 +74,6 @@ var _ref = function () {
     React = require('react');
   }
 
-  var Storage = null;
-  if (isNode()) {
-    try {
-      var rn = "react-native"; //avoid browserify error on non react-native projects
-      Storage = require(rn).AsyncStorage;
-    } catch (e) {
-      var StoragePolyFill = function () {
-        function StoragePolyFill() {
-          _classCallCheck(this, StoragePolyFill);
-
-          this.store = {};
-        }
-
-        _createClass(StoragePolyFill, [{
-          key: 'getItem',
-          value: function getItem(name, callback) {
-            if (callback) {
-              callback({}, this.store[name]);
-            } else {
-              return this.store[name];
-            }
-          }
-        }, {
-          key: 'setItem',
-          value: function setItem(name, value, callback) {
-            this.store[name] = value;
-          }
-        }]);
-
-        return StoragePolyFill;
-      }();
-
-      Storage = new StoragePolyFill();
-    }
-  } else {
-    Storage = localStorage;
-  }
-
   var SimplexStorage = function () {
     function SimplexStorage() {
       _classCallCheck(this, SimplexStorage);
@@ -91,9 +81,18 @@ var _ref = function () {
       this.listeners = [];
       this.Storage = {};
       this.sync = {};
+      this.setStorageDriver(new StoragePolyFill());
     }
 
     _createClass(SimplexStorage, [{
+      key: 'setStorageDriver',
+      value: function setStorageDriver(storageDriver) {
+        var _async = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+        this.driverAsync = _async;
+        this.driver = storageDriver;
+      }
+    }, {
       key: 'init',
       value: function init(name) {
         var _this = this,
@@ -101,6 +100,7 @@ var _ref = function () {
 
         var default_value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
         var sync = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
 
         this.Storage[name] = default_value;
         this.sync[name] = sync;
@@ -120,13 +120,14 @@ var _ref = function () {
           try {
             var storage_value = null;
 
-            if (isNode()) {
-              Storage.getItem('SIMPLEX_' + name, function (err, result) {
+            if (this.driverAsync) {
+              this.driver.getItem('SIMPLEX_' + name, function (err, result) {
                 storage_value = JSON.parse(result);
                 _this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
+                Simplex.trigger();
               });
             } else {
-              storage_value = JSON.parse(Storage.getItem('SIMPLEX_' + name));
+              storage_value = JSON.parse(this.driver.getItem('SIMPLEX_' + name));
               this.Storage[name] = storage_value !== null ? storage_value : default_value;
             }
           } catch (e) {
@@ -148,22 +149,23 @@ var _ref = function () {
     }, {
       key: 'set',
       value: function set(name) {
+        var _this2 = this;
+
         var scope = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
         this.Storage[name] = scope;
-
         if (this.sync[name]) {
-
-          if (isNode()) {
-            Storage.setItem('SIMPLEX_' + name, JSON.stringify(this.Storage[name]), function () {});
+          if (this.driverAsync) {
+            this.driver.setItem('SIMPLEX_' + name, JSON.stringify(this.Storage[name]), function () {
+              _this2.trigger(name);
+            });
           } else {
-            Storage.setItem('SIMPLEX_' + name, JSON.stringify(this.Storage[name]));
+            this.driver.setItem('SIMPLEX_' + name, JSON.stringify(this.Storage[name]));
+            this.trigger(name);
           }
-
-          //localStorage.setItem( 'SIMPLEX_' + name, JSON.stringify( this.Storage[name] ) );
+        } else {
+          this.trigger(name);
         }
-
-        this.trigger(name);
       }
     }, {
       key: 'onChange',
@@ -186,7 +188,7 @@ var _ref = function () {
     }, {
       key: 'trigger',
       value: function trigger() {
-        var _this2 = this;
+        var _this3 = this;
 
         var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : GLOBAL_EVENT_NAME;
 
@@ -195,10 +197,10 @@ var _ref = function () {
         this.listeners.forEach(function (event) {
           if (event.callback) {
             if (event.name.indexOf(GLOBAL_EVENT_NAME) === 0) {
-              result = event.callback.call({}, _this2.Storage);
+              result = event.callback.call({}, _this3.Storage);
             } else {
               if (event.name.indexOf(name) === 0) {
-                result = event.callback.call({}, _defineProperty({}, name, _this2.Storage[name]));
+                result = event.callback.call({}, _defineProperty({}, name, _this3.Storage[name]));
               }
             }
           }
@@ -240,10 +242,10 @@ var _ref = function () {
       function Connected() {
         _classCallCheck(this, Connected);
 
-        var _this3 = _possibleConstructorReturn(this, (Connected.__proto__ || Object.getPrototypeOf(Connected)).call(this));
+        var _this4 = _possibleConstructorReturn(this, (Connected.__proto__ || Object.getPrototypeOf(Connected)).call(this));
 
-        _this3.state = MapStorageToPropsFunction(Simplex.Storage, _this3.props);
-        return _this3;
+        _this4.state = MapStorageToPropsFunction(Simplex.Storage, _this4.props);
+        return _this4;
       }
 
       _createClass(Connected, [{
@@ -257,12 +259,12 @@ var _ref = function () {
       }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-          var _this4 = this;
+          var _this5 = this;
 
           Simplex.onChange(GLOBAL_EVENT_NAME + '.' + Key, function (storage) {
-            var newMappedProps = MapStorageToPropsFunction(Simplex.Storage, _this4.props, _this4.state);
-            if (!_underscore2.default.isEqual(_this4.state, newMappedProps)) {
-              _this4.setState(newMappedProps);
+            var newMappedProps = MapStorageToPropsFunction(Simplex.Storage, _this5.props, _this5.state);
+            if (!_underscore2.default.isEqual(_this5.state, newMappedProps)) {
+              _this5.setState(newMappedProps);
             }
           });
         }
@@ -298,23 +300,23 @@ var _ref = function () {
       function Connected(props) {
         _classCallCheck(this, Connected);
 
-        var _this5 = _possibleConstructorReturn(this, (Connected.__proto__ || Object.getPrototypeOf(Connected)).call(this));
+        var _this6 = _possibleConstructorReturn(this, (Connected.__proto__ || Object.getPrototypeOf(Connected)).call(this));
 
-        _this5.state = _underscore2.default.pick(Simplex, storageNames);
-        return _this5;
+        _this6.state = _underscore2.default.pick(Simplex, storageNames);
+        return _this6;
       }
 
       _createClass(Connected, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-          var _this6 = this;
+          var _this7 = this;
 
           storageNames.forEach(function (storageName) {
             Simplex.onChange(storageName + '.' + Key, function (storage) {
 
               var newState = _underscore2.default.pick(Simplex, storageNames);
-              if (!_underscore2.default.isEqual(_this6.state, newState)) {
-                _this6.setState(newState);
+              if (!_underscore2.default.isEqual(_this7.state, newState)) {
+                _this7.setState(newState);
               }
             });
           });
@@ -339,7 +341,7 @@ var _ref = function () {
     return Connected;
   }
 
-  return { Simplex: Simplex, SimplexConnect: SimplexConnect, SimplexStorage: SimplexStorage, SimplexMapToProps: SimplexMapToProps, Storage: Storage };
+  return { Simplex: Simplex, SimplexConnect: SimplexConnect, SimplexStorage: SimplexStorage, SimplexMapToProps: SimplexMapToProps, Storage: Simplex.driver };
 }(),
     Simplex = _ref.Simplex,
     SimplexConnect = _ref.SimplexConnect,

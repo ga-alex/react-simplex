@@ -9,14 +9,36 @@ React storage
 ```
 npm i --save react-simplex
 ```
+
+For web app
 ```
 import { Simplex, SimplexConnect, SimplexMapToProps } from 'react-simplex';
+
+Simplex.setStorageDriver(
+  localStorage, // storage driver
+  false         // driver is not async
+)
+
 Simplex.init('user',{},true);
 Simplex.init('todos',{},true);
 
 ```
 
 
+For react-native
+```
+import { Simplex, SimplexConnect, SimplexMapToProps } from 'react-simplex';
+import { AsyncStorage } from 'react-native';
+
+Simplex.setStorageDriver(
+  AsyncStorage, // storage driver
+  true         // driver is async
+)
+
+Simplex.init('user',{},true);
+Simplex.init('todos',{},true);
+
+```
 # 1. SimplexConnect
 
 ### App.js
@@ -76,8 +98,8 @@ class Todos extends React.Component{
     return(
       <div>
         <span>{ this.props.todos_count } / { this.props.not_finished_count }</span>
-		
-		{ 
+
+		{
 		  this.props.todos.map( ( todo, i)=>{
 			return <div key={i}>{ todo.title }</div>
 		  })
@@ -234,12 +256,22 @@ v1.2.0
 v1.2.1
 - fix AsyncStorage integration
 
-v1.2.2 
+v1.2.2
 - fix readme
 - move react-native & react dependencies to devDependencies
 
 v1.2.3
 - fix non react-native project browserify error
+
 v1.2.4
 - improve isNode detection
 - fix default state
+
+v1.2.5
+- add setStorageDriver method
+
+v1.2.6
+- fix sync with async storages
+
+v1.2.7
+- fix babel presets
