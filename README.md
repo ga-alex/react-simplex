@@ -275,3 +275,14 @@ v1.2.6
 
 v1.2.7
 - fix babel presets
+
+v1.2.8
+- fix
+
+v1.2.10
+- fix maptoprops update issue
+
+v1.2.11
+- fix unmount remove event
+- change deepclone
+

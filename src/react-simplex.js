@@ -2,6 +2,8 @@
 /* jshint esnext : true */
 /* jslint indent: 2 */
 import _ from 'underscore';
+import cloneDeep from 'lodash.clonedeep';
+
 const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = ( () => {
 
 class StoragePolyFill {
@@ -26,10 +28,12 @@ class StoragePolyFill {
 
   var GLOBAL_EVENT_NAME = 'any';
 
-  const Key = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-    return v.toString(16);
-  });
+  const Key = ()=>{
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    });
+  }
 
   const isNode = ()=>{
     return typeof window === 'undefined';
@@ -79,7 +83,7 @@ class StoragePolyFill {
 					if (this.driverAsync) {
 						this.driver.getItem( 'SIMPLEX_' + name, ( err, result )=>{
               storage_value = JSON.parse( result );
-              this.Storage[name] = storage_value !== undefined ? storage_value : default_value;
+              this.Storage[name] = storage_value !== null ? storage_value : default_value;
 							Simplex.trigger();
             });
 					} else {
@@ -94,11 +98,12 @@ class StoragePolyFill {
 
 
     get( name ){
-      return this.Storage[ name ];
+			let data = cloneDeep(this.Storage[ name ])
+      return data;
     }
 
     update( name, data ){
-      let new_data = JSON.parse( JSON.stringify(Object.assign( {}, this.Storage[ name ], data ) ) );
+      let new_data = cloneDeep(Object.assign( {}, this.Storage[ name ], data ))
       this.set( name, new_data);
     }
 
@@ -154,7 +159,7 @@ class StoragePolyFill {
     }
 
 
-    remove( name = GLOBAL_EVENT_NAME ){
+    remove( name ){
       for(var i in this.listeners){
         if ( this.listeners[i].name == name ){
           delete this.listeners[i];
@@ -172,33 +177,28 @@ class StoragePolyFill {
 
   function SimplexMapToProps( Component, MapStorageToPropsFunction ){
     if ( typeof MapStorageToPropsFunction != 'function' ){
-      MapStorageToPropsFunction = (storage)=>  JSON.parse(JSON.stringify(storage));
+      MapStorageToPropsFunction = (storage)=> cloneDeep(storage)
     }
-
+    let key = Key();
     class Connected extends React.Component{
       constructor(){
         super();
-        this.state = MapStorageToPropsFunction( Simplex.Storage, this.props );
-      }
-
-      componentWillReceiveProps(newProps) {
-        let newMappedProps = MapStorageToPropsFunction( Simplex.Storage, newProps, this.state );
-        if ( !_.isEqual( this.state, newMappedProps) ) {
-          this.setState( newMappedProps );
-        }
+				let newMappedProps = MapStorageToPropsFunction( Simplex.Storage, this.props );
+        this.state = cloneDeep(newMappedProps)
       }
 
       componentDidMount() {
-        Simplex.onChange( GLOBAL_EVENT_NAME + '.' + Key, ( storage )=>{
+        Simplex.onChange( GLOBAL_EVENT_NAME + '.' + key, ( storage )=>{
           let newMappedProps = MapStorageToPropsFunction( Simplex.Storage, this.props, this.state );
-          if ( !_.isEqual( this.state, newMappedProps) ) {
+					newMappedProps = cloneDeep(newMappedProps)
+					if ( !_.isEqual( this.state, newMappedProps) ) {
             this.setState( newMappedProps );
           }
         });
       }
 
       componentWillUnmount() {
-        Simplex.remove( GLOBAL_EVENT_NAME + '.' + Key );
+        Simplex.remove( GLOBAL_EVENT_NAME + '.' + key );
       }
 
       render() {
@@ -218,7 +218,7 @@ class StoragePolyFill {
       console.error( 'SimplexConnect props must be an array' );
       return;
     }
-
+    let key = Key();
     class Connected extends React.Component{
       constructor( props ){
         super();
@@ -227,7 +227,7 @@ class StoragePolyFill {
 
       componentDidMount() {
         storageNames.forEach( ( storageName )=>{
-          Simplex.onChange( storageName + '.' + Key, ( storage )=>{
+          Simplex.onChange( storageName + '.' + key, ( storage )=>{
 
             let newState = _.pick( Simplex, storageNames);
             if ( !_.isEqual( this.state, newState) ) {
@@ -240,7 +240,7 @@ class StoragePolyFill {
 
       componentWillUnmount() {
         storageNames.forEach( ( storageName )=>{
-          Simplex.remove( storageName + '.' + Key );
+          Simplex.remove( storageName + '.' + key );
         });
       }
 
