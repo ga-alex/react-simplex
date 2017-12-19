@@ -179,16 +179,18 @@ class StoragePolyFill {
     if ( typeof MapStorageToPropsFunction != 'function' ){
       MapStorageToPropsFunction = (storage)=> cloneDeep(storage)
     }
-    let key = Key();
+
     class Connected extends React.Component{
       constructor(){
         super();
 				let newMappedProps = MapStorageToPropsFunction( Simplex.Storage, this.props );
-        this.state = cloneDeep(newMappedProps)
+        this.state = cloneDeep(newMappedProps);
+        this.key = Key();
       }
 
       componentDidMount() {
-        Simplex.onChange( GLOBAL_EVENT_NAME + '.' + key, ( storage )=>{
+        console.log('componentDidMount', Component, this.key)
+        Simplex.onChange( GLOBAL_EVENT_NAME + '.' + this.key, ( storage )=>{
           let newMappedProps = MapStorageToPropsFunction( Simplex.Storage, this.props, this.state );
 					newMappedProps = cloneDeep(newMappedProps)
 					if ( !_.isEqual( this.state, newMappedProps) ) {
@@ -198,7 +200,8 @@ class StoragePolyFill {
       }
 
       componentWillUnmount() {
-        Simplex.remove( GLOBAL_EVENT_NAME + '.' + key );
+        console.log('componentWillUnmount', Component, this.key)
+        Simplex.remove( GLOBAL_EVENT_NAME + '.' + this.key );
       }
 
       render() {
@@ -218,16 +221,17 @@ class StoragePolyFill {
       console.error( 'SimplexConnect props must be an array' );
       return;
     }
-    let key = Key();
+    
     class Connected extends React.Component{
       constructor( props ){
         super();
         this.state = _.pick( Simplex, storageNames);
+        this.key = Key();
       }
 
       componentDidMount() {
         storageNames.forEach( ( storageName )=>{
-          Simplex.onChange( storageName + '.' + key, ( storage )=>{
+          Simplex.onChange( storageName + '.' + this.key, ( storage )=>{
 
             let newState = _.pick( Simplex, storageNames);
             if ( !_.isEqual( this.state, newState) ) {
@@ -240,7 +244,7 @@ class StoragePolyFill {
 
       componentWillUnmount() {
         storageNames.forEach( ( storageName )=>{
-          Simplex.remove( storageName + '.' + key );
+          Simplex.remove( storageName + '.' + this.key );
         });
       }
 
