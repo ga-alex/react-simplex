@@ -11,7 +11,7 @@ npm i --save react-simplex
 ```
 
 For web app
-```
+```javascript
 import { Simplex, SimplexConnect, SimplexMapToProps } from 'react-simplex';
 
 Simplex.setStorageDriver(
@@ -26,7 +26,7 @@ Simplex.init('todos',{},true);
 
 
 For react-native
-```
+```javascript
 import { Simplex, SimplexConnect, SimplexMapToProps } from 'react-simplex';
 import { AsyncStorage } from 'react-native';
 
@@ -39,52 +39,13 @@ Simplex.init('user',{},true);
 Simplex.init('todos',{},true);
 
 ```
-# 1. SimplexConnect
-
-### App.js
-
-```javascript
-import { Simplex } from 'react-simplex';
-Simplex.init('user',{},true); //Define some storage scope with name 'user', value = {}, synch with localStorage = true
-```
-
-
-### UserInfo.jsx - react component
-```javascript
-import { SimplexConnect } from 'react-simplex';
-import React from 'react'
-
-class UserInfo extends React.Component{
-  render(){
-    return(
-      <div>
-        <span>{ this.props.user.login }</span>
-        <span>{ this.props.user.name }</span>
-      </div>
-    );
-  }
-};
-
-export default SimplexConnect( UserInfo, ['user'] );  //Connect component UserInfo to Simplex user scope
-```
-
-
-### Change storage
-
-```javascript
-Simplex.user = {
-  name: 'Alex',
-  login: 'Bumkaka'
-}
-```
-
-
-# 2. SimplexMapToProps
+# SimplexMapToProps
 
 ## App.js
 
 ```javascript
 import { Simplex } from 'react-simplex';
+
 Simplex.init('todos', [], false); //Define some storage scope
 ```
 
@@ -93,17 +54,17 @@ Simplex.init('todos', [], false); //Define some storage scope
 ```javascript
 import { SimplexMapToProps } from 'react-simplex';
 
-class Todos extends React.Component{
+class Todos extends Component{
   render(){
     return(
       <div>
         <span>{ this.props.todos_count } / { this.props.not_finished_count }</span>
 
-		{
-		  this.props.todos.map( ( todo, i)=>{
-			return <div key={i}>{ todo.title }</div>
-		  })
-		}
+        {
+          this.props.todos.map( ( todo, i)=>{
+          return <div key={i}>{ todo.title }</div>
+          })
+        }
       </div>
     );
   }
@@ -114,105 +75,124 @@ export default SimplexMapToProps( Todos, ( storage, current_props )=>{
     todos: storage.todos,
     todos_count: storage.todos.length,
     not_finished_count: storage.todos.filter( ( todo )=>{
-            return !todo.done;
-        }).length
+      return !todo.done;
+    }).length
   }
 });
+```
+
+
+### Put data to storage
+
+```javascript
+Simplex.todos = [
+  {title: 'tests'},
+  {title: 'fix'},
+  {title: 'update readme'},
+  {title: 'update version'},
+  {title: 'publish'}
+]
+
+
+Simplex.set('todos', [
+  {title: 'tests'},
+  {title: 'fix'},
+  {title: 'update readme'},
+  {title: 'update version'},
+  {title: 'publish'}
+])
+```
+### Atention! Change exist storage type array
+```javascript
+Simplex.todos = [
+  {title: 'tests'},
+  {title: 'fix'},
+  {title: 'update readme'},
+  {title: 'update version'},
+  {title: 'publish'}
+]
+
+Simplex.todos.push({
+  title:
+})
+
+//After that changes data not pass to components
+//you need to trigger onChange manualy
+Simplex.trigger('todos')
+
+or
+
+const todos = Simplex.todos //imutable
+todos.push({
+  title:
+})
+Simplex.todos = todos;
 ```
 
 
 ### Change storage
 
 ```javascript
-Simplex.todos = [
-	{title: 'tests'},
-	{title: 'fix'},
-	{title: 'update readme'},
-	{title: 'update version'},
-	{title: 'publish'}
-]
-or
-Simplex.set('todos', [
-	{title: 'tests'},
-	{title: 'fix'},
-	{title: 'update readme'},
-	{title: 'update version'},
-	{title: 'publish'}
-])
-```
-
-# General
-1. import Simplex and connector
-2. Init new scope. **Simplex.init( ScopeName, DefaultValue, SyncWithLocalStorage[ ture||false ] )**;
-3. **Connect** React Component to Simplex scopes by SimplexConnect or SimplexMapToProps
-
-
-##### connect by SimplexConnect
-```javascript
-SimplexConnect( Component, ['scope1' , 'scope2', 'scope3' ]);
-```
-
-##### connect by SimplexMapToProps.
-```javascript
-var Component = SimplexMapToProps( Component, ( storage, current_props )=>{
-  return {
-    todos: storage.todos,
-    todos_count: storage.todos.length,
-    not_finished_count: storage.todos.filter( ( todo )=>{
-            return !todo.done;
-        }).length
-  }
-});
-
-
-//with route
-<Route path="/todo_detail/:id" components={{page: Page}}/>
-...
-...
-var Page = SimplexMapToProps( Page, ( state, props )=>{
-  return {
-    element: storage.todos.filter( ( todo )=>{
-      return todo.id == props.some_component_props_id;
-    })[0]
-  }
-});
-
-```
-3. Simplex.**onChange**( scopeName, callback( scope ) )
-- scopeName - use namespace, "user.ComponentName","user.ComponentName" + key etc..  When use Simplex.remove( "user.ComponentName" ), will be removed only this listener
-4. Simplex.**remove**( scopeName ) - remove listener
-5. Simplex.user = { some object } - will change scope and fire subscribed listeners ( setter )
-6. **For update** scope you need:
-
-```javascript
-//Update array type storage
-var users = Simplex.users; //get scope
-users.push{ name: "Bob" }; //change
-Simplex.users = users;
-or
-Simplex.set('users', users) ;
-
-//you can use to update all components
-Simplex.trigger();
-
-
-
-
-
-//Update specific key object type storage
+//Storage already have some data
 Simplex.user = {
-  name: 'Daniel',
-  age: 21,
-  email: 'todo@simplex.com',
-  count: 12
+  name: 'Alex',
+  token: 'asEkfjeE3rR',
+  role: 3,
+  email: 'test@test.ts',
+  description: 'Some text'
 }
-
-Simplex.update('user',{
-  name: 'Alex'
-});
 ```
 
+To update 'user' storage we should do
+
+```javascript
+//Update will auto trigger onChange
+Simplex.update('user', {
+  description: 'New description'
+});
+
+or
+
+//Direct access to keys not trigger onChange
+Simplex.user.description = 'Some text'
+Simplex.trigger('user') //this is important line
+
+or
+
+const user = Simplex.user
+user.description = 'New description'
+Simplex.user = user
+
+```
+
+## `Simplex.init(scopeName, data, sync)`
+Init scope with default values **data**
+
+`sync` - true|false  sync data with localstorage|asyncStorage
 
 
+## `Simplex.set(scopeName, data)`
 
+Set value of the defined scope
 
+## `Simplex.update(scopeName, data)`
+
+Update existing scope
+
+## `Simplex.onChange(scopeName, callback)`
+
+`scopeName` - can be with namespace 'user.NAMESPACE'
+
+Subscribe to scope changes
+
+## `Simplex.remove(scopeName)`
+
+`scopeName` with namespace
+
+remove listener 
+
+## `Simplex.trigger(scopeName)`
+
+`scopeName` - default *any*
+
+Trigger scope changes
