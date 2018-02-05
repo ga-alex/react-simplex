@@ -98,8 +98,11 @@ console.error('Simplex: can`t sync data from localStorage for '+name);
 
 
 name){
-var data=(0,_lodash2.default)(this.Storage[name]);
-return data;
+if(Array.isArray(this.Storage[name])){
+return this.Storage[name].slice(0);
+}else{
+return(0,_lodash2.default)(this.Storage[name]);
+}
 }},{key:'update',value:function update(
 
 name,data){
@@ -185,27 +188,23 @@ function Connected(){_classCallCheck(this,Connected);var _this4=_possibleConstru
 
 var newMappedProps=MapStorageToPropsFunction(Simplex.Storage,_this4.props);
 _this4.state=(0,_lodash2.default)(newMappedProps);
-_this4.key=Key();return _this4;
-}_createClass(Connected,[{key:'componentDidMount',value:function componentDidMount()
+_this4.key=Key();
 
-{var _this5=this;
-console.log('componentDidMount',Component,this.key);
-Simplex.onChange(GLOBAL_EVENT_NAME+'.'+this.key,function(storage){
-var newMappedProps=MapStorageToPropsFunction(Simplex.Storage,_this5.props,_this5.state);
+Simplex.onChange(GLOBAL_EVENT_NAME+'.'+_this4.key,function(storage){
+var newMappedProps=MapStorageToPropsFunction(Simplex.Storage,_this4.props,_this4.state);
 newMappedProps=(0,_lodash2.default)(newMappedProps);
-if(!_underscore2.default.isEqual(_this5.state,newMappedProps)){
-_this5.setState(newMappedProps);
+if(!_underscore2.default.isEqual(_this4.state,newMappedProps)){
+_this4.setState(newMappedProps);
 }
-});
-}},{key:'componentWillUnmount',value:function componentWillUnmount()
+});return _this4;
+}_createClass(Connected,[{key:'componentWillUnmount',value:function componentWillUnmount()
 
 {
-console.log('componentWillUnmount',Component,this.key);
 Simplex.remove(GLOBAL_EVENT_NAME+'.'+this.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:208}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:207}}));
 }}]);return Connected;}(React.Component);
 
 
@@ -223,33 +222,30 @@ return;
 }var
 
 Connected=function(_React$Component2){_inherits(Connected,_React$Component2);
-function Connected(props){_classCallCheck(this,Connected);var _this6=_possibleConstructorReturn(this,(Connected.__proto__||Object.getPrototypeOf(Connected)).call(this));
+function Connected(props){_classCallCheck(this,Connected);var _this5=_possibleConstructorReturn(this,(Connected.__proto__||Object.getPrototypeOf(Connected)).call(this));
 
-_this6.state=_underscore2.default.pick(Simplex,storageNames);
-_this6.key=Key();return _this6;
-}_createClass(Connected,[{key:'componentDidMount',value:function componentDidMount()
+_this5.state=_underscore2.default.pick(Simplex,storageNames);
+_this5.key=Key();
 
-{var _this7=this;
 storageNames.forEach(function(storageName){
-Simplex.onChange(storageName+'.'+_this7.key,function(storage){
-
+Simplex.onChange(storageName+'.'+_this5.key,function(storage){
 var newState=_underscore2.default.pick(Simplex,storageNames);
-if(!_underscore2.default.isEqual(_this7.state,newState)){
-_this7.setState(newState);
+if(!_underscore2.default.isEqual(_this5.state,newState)){
+_this5.setState(newState);
 }
-
 });
-});
-}},{key:'componentWillUnmount',value:function componentWillUnmount()
+});return _this5;
 
-{var _this8=this;
+}_createClass(Connected,[{key:'componentWillUnmount',value:function componentWillUnmount()
+
+{var _this6=this;
 storageNames.forEach(function(storageName){
-Simplex.remove(storageName+'.'+_this8.key);
+Simplex.remove(storageName+'.'+_this6.key);
 });
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:252}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:248}}));
 }}]);return Connected;}(React.Component);
 
 
