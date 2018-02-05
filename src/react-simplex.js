@@ -189,7 +189,6 @@ class StoragePolyFill {
       }
 
       componentDidMount() {
-        console.log('componentDidMount', Component, this.key)
         Simplex.onChange( GLOBAL_EVENT_NAME + '.' + this.key, ( storage )=>{
           let newMappedProps = MapStorageToPropsFunction( Simplex.Storage, this.props, this.state );
 					newMappedProps = cloneDeep(newMappedProps)
@@ -200,7 +199,6 @@ class StoragePolyFill {
       }
 
       componentWillUnmount() {
-        console.log('componentWillUnmount', Component, this.key)
         Simplex.remove( GLOBAL_EVENT_NAME + '.' + this.key );
       }
 

@@ -189,7 +189,6 @@ _this4.key=Key();return _this4;
 }_createClass(Connected,[{key:'componentDidMount',value:function componentDidMount()
 
 {var _this5=this;
-console.log('componentDidMount',Component,this.key);
 Simplex.onChange(GLOBAL_EVENT_NAME+'.'+this.key,function(storage){
 var newMappedProps=MapStorageToPropsFunction(Simplex.Storage,_this5.props,_this5.state);
 newMappedProps=(0,_lodash2.default)(newMappedProps);
@@ -200,12 +199,11 @@ _this5.setState(newMappedProps);
 }},{key:'componentWillUnmount',value:function componentWillUnmount()
 
 {
-console.log('componentWillUnmount',Component,this.key);
 Simplex.remove(GLOBAL_EVENT_NAME+'.'+this.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:208}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:206}}));
 }}]);return Connected;}(React.Component);
 
 
@@ -249,7 +247,7 @@ Simplex.remove(storageName+'.'+_this8.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:252}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:250}}));
 }}]);return Connected;}(React.Component);
 
 

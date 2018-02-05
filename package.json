@@ -1,6 +1,6 @@
 {
   "name": "react-simplex",
-  "version": "1.2.11",
+  "version": "1.2.13",
   "description": "React storage",
   "main": "./dist/react-simplex.js",
   "directories": {
