@@ -52,16 +52,30 @@ class StoragePolyFill {
     constructor() {
       this.listeners = [];
       this.Storage = {};
+      this.StorageDefaults = {};
       this.sync = {};
 			this.setStorageDriver( new StoragePolyFill() )
     }
+
     setStorageDriver (storageDriver, _async = false) {
 			this.driverAsync = _async;
 			this.driver = storageDriver;
 		}
 
-    init( name, default_value = [], sync = false ) {
+    reset(name){
+      if (name){
+        this.Storage[name] = this.StorageDefaults[name];
+        this.trigger(name);
+      } else {
+        for(const n in this.StorageDefaults){
+          this.Storage[n] = this.StorageDefaults[n];
+        }
+        this.trigger();
+      }
+    }
 
+    init( name, default_value = [], sync = false ) {
+      this.StorageDefaults[name] = default_value;
       this.Storage[name] = default_value;
       this.sync[name] = sync;
 
@@ -192,7 +206,7 @@ class StoragePolyFill {
 
         Simplex.onChange( GLOBAL_EVENT_NAME + '.' + this.key, ( storage )=>{
           let newMappedProps = MapStorageToPropsFunction( Simplex.Storage, this.props, this.state );
-					newMappedProps = cloneDeep(newMappedProps)
+          newMappedProps = cloneDeep(newMappedProps)
 					if ( !_.isEqual( this.state, newMappedProps) ) {
             this.setState( newMappedProps );
           }

@@ -179,6 +179,14 @@ Set value of the defined scope
 
 Update existing scope
 
+## `Simplex.reset(scopeName)`
+
+Reset scope to init value
+
+## `Simplex.reset()`
+
+Reset all scopes to init values
+
 ## `Simplex.onChange(scopeName, callback)`
 
 `scopeName` - can be with namespace 'user.NAMESPACE'

@@ -52,16 +52,30 @@ SimplexStorage=function(){
 function SimplexStorage(){_classCallCheck(this,SimplexStorage);
 this.listeners=[];
 this.Storage={};
+this.StorageDefaults={};
 this.sync={};
 this.setStorageDriver(new StoragePolyFill());
 }_createClass(SimplexStorage,[{key:'setStorageDriver',value:function setStorageDriver(
+
 storageDriver){var _async=arguments.length>1&&arguments[1]!==undefined?arguments[1]:false;
 this.driverAsync=_async;
 this.driver=storageDriver;
+}},{key:'reset',value:function reset(
+
+name){
+if(name){
+this.Storage[name]=this.StorageDefaults[name];
+this.trigger(name);
+}else{
+for(var n in this.StorageDefaults){
+this.Storage[n]=this.StorageDefaults[n];
+}
+this.trigger();
+}
 }},{key:'init',value:function init(
 
 name){var _this=this,_arguments=arguments;var default_value=arguments.length>1&&arguments[1]!==undefined?arguments[1]:[];var sync=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;
-
+this.StorageDefaults[name]=default_value;
 this.Storage[name]=default_value;
 this.sync[name]=sync;
 
@@ -204,7 +218,7 @@ Simplex.remove(GLOBAL_EVENT_NAME+'.'+this.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:207}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:221}}));
 }}]);return Connected;}(React.Component);
 
 
@@ -245,7 +259,7 @@ Simplex.remove(storageName+'.'+_this6.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:248}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:262}}));
 }}]);return Connected;}(React.Component);
 
 

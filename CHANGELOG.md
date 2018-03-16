@@ -78,3 +78,6 @@ v1.3.0
 - Add documentation
 - Move onChange to constructor
 - replace deepclone array with slice(0)
+
+v1.3.2
+- add reset method, reset some storage to init value or reset all to defaults
