@@ -383,3 +383,30 @@ describe("Test reset #2, reset all storages", function () {
   });
 });
 
+const ARRAY_INITIAL = [1,2,3]
+const ARRAY_NEW = [4,5,6]
+
+describe("Test update", function () {
+  describe('update array storage', function () {
+    before(function () {
+      Simplex.init('array', ARRAY_INITIAL);
+      Simplex.update('array', ARRAY_NEW)
+    });
+
+    it("array should be updated: " + JSON.stringify(ARRAY_NEW), function () {
+      expect(Simplex.array).to.deep.equal(ARRAY_NEW);
+    });
+  });
+});
+
+describe("Test reset array storage", function () {
+  describe(`Simplex.reset('array') array storage`, function () {
+    before(function () {
+      Simplex.reset('array');
+    });
+
+    it("array should be initial: " + JSON.stringify(ARRAY_INITIAL), function () {
+      expect(Simplex.array).to.deep.equal(ARRAY_INITIAL);
+    });
+  });
+});

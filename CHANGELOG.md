@@ -81,3 +81,6 @@ v1.3.0
 
 v1.3.2
 - add reset method, reset some storage to init value or reset all to defaults
+
+v1.3.3
+- 

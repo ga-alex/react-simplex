@@ -64,19 +64,20 @@ class StoragePolyFill {
 
     reset(name){
       if (name){
-        this.Storage[name] = this.StorageDefaults[name];
+        this.Storage[name] = cloneDeep(this.StorageDefaults[name]);
         this.trigger(name);
       } else {
         for(const n in this.StorageDefaults){
-          this.Storage[n] = this.StorageDefaults[n];
+          this.Storage[n] = cloneDeep(this.StorageDefaults[n]);
         }
         this.trigger();
       }
     }
 
     init( name, default_value = [], sync = false ) {
-      this.StorageDefaults[name] = default_value;
-      this.Storage[name] = default_value;
+
+      this.StorageDefaults[name] = cloneDeep(default_value);
+      this.Storage[name] = cloneDeep(default_value);
       this.sync[name] = sync;
 
       if ( !this.hasOwnProperty( name ) ){
@@ -120,8 +121,15 @@ class StoragePolyFill {
     }
 
     update( name, data ){
-      let new_data = cloneDeep(Object.assign( {}, this.Storage[ name ], data ))
-      this.set( name, new_data);
+      switch(true){
+        case Object.is(this.Storage[ name ]):
+          this.set( name, { ...this.Storage[ name ], ...data });
+          break;
+
+        default:
+          this.set( name, cloneDeep(data) );
+          break;
+      }
     }
 
     set( name, scope = [] ){

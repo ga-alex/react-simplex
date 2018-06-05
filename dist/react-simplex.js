@@ -64,19 +64,20 @@ this.driver=storageDriver;
 
 name){
 if(name){
-this.Storage[name]=this.StorageDefaults[name];
+this.Storage[name]=(0,_lodash2.default)(this.StorageDefaults[name]);
 this.trigger(name);
 }else{
 for(var n in this.StorageDefaults){
-this.Storage[n]=this.StorageDefaults[n];
+this.Storage[n]=(0,_lodash2.default)(this.StorageDefaults[n]);
 }
 this.trigger();
 }
 }},{key:'init',value:function init(
 
 name){var _this=this,_arguments=arguments;var default_value=arguments.length>1&&arguments[1]!==undefined?arguments[1]:[];var sync=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;
-this.StorageDefaults[name]=default_value;
-this.Storage[name]=default_value;
+
+this.StorageDefaults[name]=(0,_lodash2.default)(default_value);
+this.Storage[name]=(0,_lodash2.default)(default_value);
 this.sync[name]=sync;
 
 if(!this.hasOwnProperty(name)){
@@ -120,8 +121,15 @@ return(0,_lodash2.default)(this.Storage[name]);
 }},{key:'update',value:function update(
 
 name,data){
-var new_data=(0,_lodash2.default)(_extends({},this.Storage[name],data));
-this.set(name,new_data);
+switch(true){
+case Object.is(this.Storage[name]):
+this.set(name,_extends({},this.Storage[name],data));
+break;
+
+default:
+this.set(name,(0,_lodash2.default)(data));
+break;}
+
 }},{key:'set',value:function set(
 
 name){var _this2=this;var scope=arguments.length>1&&arguments[1]!==undefined?arguments[1]:[];
@@ -218,7 +226,7 @@ Simplex.remove(GLOBAL_EVENT_NAME+'.'+this.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:221}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:229}}));
 }}]);return Connected;}(React.Component);
 
 
@@ -259,7 +267,7 @@ Simplex.remove(storageName+'.'+_this6.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:262}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:270}}));
 }}]);return Connected;}(React.Component);
 
 
