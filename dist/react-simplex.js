@@ -64,13 +64,11 @@ this.driver=storageDriver;
 
 name){
 if(name){
-this.Storage[name]=(0,_lodash2.default)(this.StorageDefaults[name]);
-this.trigger(name);
+this.set(name,(0,_lodash2.default)(this.StorageDefaults[name]));
 }else{
 for(var n in this.StorageDefaults){
-this.Storage[n]=(0,_lodash2.default)(this.StorageDefaults[n]);
+this.set(n,(0,_lodash2.default)(this.StorageDefaults[n]));
 }
-this.trigger();
 }
 }},{key:'init',value:function init(
 
@@ -122,7 +120,7 @@ return(0,_lodash2.default)(this.Storage[name]);
 
 name,data){
 switch(true){
-case Object.is(this.Storage[name]):
+case this.Storage[name]===Object(this.Storage[name]):
 this.set(name,_extends({},this.Storage[name],data));
 break;
 
@@ -226,7 +224,7 @@ Simplex.remove(GLOBAL_EVENT_NAME+'.'+this.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:229}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:227}}));
 }}]);return Connected;}(React.Component);
 
 
@@ -267,7 +265,7 @@ Simplex.remove(storageName+'.'+_this6.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:270}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:268}}));
 }}]);return Connected;}(React.Component);
 
 
