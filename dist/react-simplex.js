@@ -1,4 +1,4 @@
-'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports.Storage=exports.SimplexMapToProps=exports.SimplexStorage=exports.SimplexConnect=exports.Simplex=undefined;var _jsxFileName='./src/react-simplex.js';var _extends=Object.assign||function(target){for(var i=1;i<arguments.length;i++){var source=arguments[i];for(var key in source){if(Object.prototype.hasOwnProperty.call(source,key)){target[key]=source[key];}}}return target;};var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();
+'use strict';Object.defineProperty(exports,"__esModule",{value:true});exports.Storage=exports.SimplexMapToProps=exports.SimplexStorage=exports.SimplexConnect=exports.Simplex=undefined;var _jsxFileName='./src/react-simplex.js';var _extends=Object.assign||function(target){for(var i=1;i<arguments.length;i++){var source=arguments[i];for(var key in source){if(Object.prototype.hasOwnProperty.call(source,key)){target[key]=source[key];}}}return target;};var _typeof=typeof Symbol==="function"&&typeof(typeof Symbol==='function'?Symbol.iterator:'@@iterator')==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==(typeof Symbol==='function'?Symbol.prototype:'@@prototype')?"symbol":typeof obj;};var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();
 
 
 var _underscore=require('underscore');var _underscore2=_interopRequireDefault(_underscore);
@@ -119,15 +119,13 @@ return(0,_lodash2.default)(this.Storage[name]);
 }},{key:'update',value:function update(
 
 name,data){
-switch(true){
-case this.Storage[name]===Object(this.Storage[name]):
+
+if(!Array.isArray(this.Storage[name])&&_typeof(this.Storage[name])==='object'){
 this.set(name,_extends({},this.Storage[name],data));
-break;
+return;
+}
 
-default:
 this.set(name,(0,_lodash2.default)(data));
-break;}
-
 }},{key:'set',value:function set(
 
 name){var _this2=this;var scope=arguments.length>1&&arguments[1]!==undefined?arguments[1]:[];
@@ -212,7 +210,9 @@ _this4.key=Key();
 
 Simplex.onChange(GLOBAL_EVENT_NAME+'.'+_this4.key,function(storage){
 var newMappedProps=MapStorageToPropsFunction(Simplex.Storage,_this4.props,_this4.state);
+
 newMappedProps=(0,_lodash2.default)(newMappedProps);
+
 if(!_underscore2.default.isEqual(_this4.state,newMappedProps)){
 _this4.setState(newMappedProps);
 }
