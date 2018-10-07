@@ -84,3 +84,9 @@ v1.3.2
 
 v1.3.3
 - 
+
+v1.3.9
+- fexed array update trigger
+
+v1.4.0
+- added Promises to Simplex.init

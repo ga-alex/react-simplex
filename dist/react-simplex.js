@@ -73,13 +73,13 @@ this.set(n,(0,_lodash2.default)(this.StorageDefaults[n]));
 }},{key:'init',value:function init(
 
 name){var _this=this,_arguments=arguments;var default_value=arguments.length>1&&arguments[1]!==undefined?arguments[1]:[];var sync=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;
+return new Promise(function(resolve,reject){
+_this.StorageDefaults[name]=(0,_lodash2.default)(default_value);
+_this.Storage[name]=(0,_lodash2.default)(default_value);
+_this.sync[name]=sync;
 
-this.StorageDefaults[name]=(0,_lodash2.default)(default_value);
-this.Storage[name]=(0,_lodash2.default)(default_value);
-this.sync[name]=sync;
-
-if(!this.hasOwnProperty(name)){
-Object.defineProperty(this,name,{
+if(!_this.hasOwnProperty(name)){
+Object.defineProperty(_this,name,{
 set:function set(scope){
 _this.set(name,scope);
 },
@@ -93,20 +93,35 @@ if(sync){
 try{
 var storage_value=null;
 
-if(this.driverAsync){
-this.driver.getItem('SIMPLEX_'+name,function(err,result){
+if(_this.driverAsync){
+_this.driver.getItem('SIMPLEX_'+name,function(err,result){
+
+if(result!==undefined){
 storage_value=JSON.parse(result);
-_this.Storage[name]=storage_value!==null?storage_value:default_value;
+}
+_this.Storage[name]=result!==undefined?storage_value:(0,_lodash2.default)(default_value);
 Simplex.trigger();
+resolve();
 });
 }else{
-storage_value=JSON.parse(this.driver.getItem('SIMPLEX_'+name));
-this.Storage[name]=storage_value!==null?storage_value:default_value;
+var data=_this.driver.getItem('SIMPLEX_'+name);
+if(data!==undefined){
+storage_value=JSON.parse(_this.driver.getItem('SIMPLEX_'+name));
+}
+_this.Storage[name]=data!==undefined?storage_value:(0,_lodash2.default)(default_value);
+resolve();
 }
 }catch(e){
+resolve();
+console.log(e);
 console.error('Simplex: can`t sync data from localStorage for '+name);
 }
+}else{
+resolve();
 }
+
+
+});
 }},{key:'get',value:function get(
 
 
@@ -224,7 +239,7 @@ Simplex.remove(GLOBAL_EVENT_NAME+'.'+this.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:227}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:242}}));
 }}]);return Connected;}(React.Component);
 
 
@@ -265,7 +280,7 @@ Simplex.remove(storageName+'.'+_this6.key);
 }},{key:'render',value:function render()
 
 {
-return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:268}}));
+return React.createElement(Component,_extends({},this.props,this.state,{__source:{fileName:_jsxFileName,lineNumber:283}}));
 }}]);return Connected;}(React.Component);
 
 

@@ -73,40 +73,55 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
     }
 
     init(name, default_value = [], sync = false) {
+      return new Promise((resolve, reject) => {
+        this.StorageDefaults[name] = cloneDeep(default_value);
+        this.Storage[name] = cloneDeep(default_value);
+        this.sync[name] = sync;
 
-      this.StorageDefaults[name] = cloneDeep(default_value);
-      this.Storage[name] = cloneDeep(default_value);
-      this.sync[name] = sync;
-
-      if (!this.hasOwnProperty(name)) {
-        Object.defineProperty(this, name, {
-          set: (scope) => {
-            this.set(name, scope);
-          },
-          get: (prop) => {
-            return this.Storage[arguments[0]];
-          }
-        });
-      }
-
-      if (sync) {
-        try {
-          let storage_value = null;
-
-          if (this.driverAsync) {
-            this.driver.getItem('SIMPLEX_' + name, (err, result) => {
-              storage_value = JSON.parse(result);
-              this.Storage[name] = storage_value !== null ? storage_value : default_value;
-              Simplex.trigger();
-            });
-          } else {
-            storage_value = JSON.parse(this.driver.getItem('SIMPLEX_' + name));
-            this.Storage[name] = storage_value !== null ? storage_value : default_value;
-          }
-        } catch (e) {
-          console.error('Simplex: can`t sync data from localStorage for ' + name);
+        if (!this.hasOwnProperty(name)) {
+          Object.defineProperty(this, name, {
+            set: (scope) => {
+              this.set(name, scope);
+            },
+            get: (prop) => {
+              return this.Storage[arguments[0]];
+            }
+          });
         }
-      }
+
+        if (sync) {
+          try {
+            let storage_value = null;
+
+            if (this.driverAsync) {
+              this.driver.getItem('SIMPLEX_' + name, (err, result) => {
+
+                if (result !== undefined){
+                  storage_value = JSON.parse(result);
+                }
+                this.Storage[name] = result !== undefined ? storage_value : cloneDeep(default_value);
+                Simplex.trigger();
+                resolve();
+              });
+            } else {
+              const data = this.driver.getItem('SIMPLEX_' + name);
+              if (data !== undefined){
+                storage_value = JSON.parse(this.driver.getItem('SIMPLEX_' + name));
+              }
+              this.Storage[name] = data !== undefined ? storage_value : cloneDeep(default_value);
+              resolve();
+            }
+          } catch (e) {
+            resolve();
+            console.log(e)
+            console.error('Simplex: can`t sync data from localStorage for ' + name);
+          }
+        } else {
+          resolve();
+        }
+
+
+      });
     }
 
 

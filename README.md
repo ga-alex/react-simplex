@@ -20,7 +20,7 @@ Simplex.setStorageDriver(
 )
 
 Simplex.init('user',{},true);
-Simplex.init('todos',{},true);
+await Simplex.init('todos',{},true);
 
 ```
 
