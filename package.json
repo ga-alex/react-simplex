@@ -1,18 +1,18 @@
 {
   "name": "react-simplex",
-  "version": "1.4.0",
+  "version": "1.4.6",
   "description": "React storage",
   "main": "./dist/react-simplex.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register ./tests/test.js",
-    "build": "babel ./src/react-simplex.js --presets=babel-preset-react,babel-preset-es2015,babel-preset-stage-0 --out-file ./dist/react-simplex.js"
+    "test": "mocha --compilers js:@babel/register ./tests/test.js",
+    "build": "babel ./src/react-simplex.js  --out-file ./dist/react-simplex.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bumkaka/react-simplex.git"
+    "url": "git+https://github.com/ga-alex/react-simplex.git"
   },
   "keywords": [
     "reactjs",
@@ -21,21 +21,39 @@
   "author": "Bumkaka",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bumkaka/react-simplex/issues"
+    "url": "https://github.com/ga-alex/react-simplex/issues"
   },
-  "homepage": "https://github.com/bumkaka/react-simplex#readme",
+  "homepage": "https://github.com/ga-alex/react-simplex#readme",
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/plugin-proposal-do-expressions": "^7.0.0",
+    "@babel/plugin-proposal-export-default-from": "^7.0.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
+    "@babel/plugin-proposal-function-bind": "^7.0.0",
+    "@babel/plugin-proposal-function-sent": "^7.0.0",
+    "@babel/plugin-proposal-json-strings": "^7.0.0",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
+    "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-stage-0": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "chai": "^4.2.0",
-    "enzyme": "^3.7.0",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^8.0.0",
     "gulp-inject-string": "^1.1.1",
@@ -45,7 +63,6 @@
     "mocha": "^5.2.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-native": "^0.57.2",
     "react-test-renderer": "^16.5.2",
     "webidl-conversions": "^4.0.2",
     "zombie": "^6.1.3"

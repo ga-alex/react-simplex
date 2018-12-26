@@ -1,8 +1,8 @@
 /* jslint node: true */
 /* jshint esnext : true */
 /* jslint indent: 2 */
-import _ from 'underscore';
-import cloneDeep from 'lodash.clonedeep';
+const _ = require('underscore');
+const cloneDeep =  require('lodash.clonedeep');
 
 const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = (() => {
 
@@ -72,11 +72,12 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
       }
     }
 
-    init(name, default_value = [], sync = false) {
+    init(name, default_value = null, sync = false) {
       return new Promise((resolve, reject) => {
         this.StorageDefaults[name] = cloneDeep(default_value);
         this.Storage[name] = cloneDeep(default_value);
         this.sync[name] = sync;
+
 
         if (!this.hasOwnProperty(name)) {
           Object.defineProperty(this, name, {
@@ -91,11 +92,10 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
 
         if (sync) {
           try {
-            let storage_value = null;
+            let storage_value = cloneDeep(default_value);
 
             if (this.driverAsync) {
               this.driver.getItem('SIMPLEX_' + name, (err, result) => {
-
                 if (result !== undefined){
                   storage_value = JSON.parse(result);
                 }
@@ -105,7 +105,7 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
               });
             } else {
               const data = this.driver.getItem('SIMPLEX_' + name);
-              if (data !== undefined){
+              if (data){
                 storage_value = JSON.parse(this.driver.getItem('SIMPLEX_' + name));
               }
               this.Storage[name] = data !== undefined ? storage_value : cloneDeep(default_value);
@@ -119,8 +119,6 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
         } else {
           resolve();
         }
-
-
       });
     }
 
@@ -225,11 +223,9 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
 
         Simplex.onChange(GLOBAL_EVENT_NAME + '.' + this.key, (storage) => {
           let newMappedProps = MapStorageToPropsFunction(Simplex.Storage, this.props, this.state);
-
-          newMappedProps = cloneDeep(newMappedProps);
-
+          // newMappedProps = cloneDeep(newMappedProps);
           if (!_.isEqual(this.state, newMappedProps)) {
-            this.setState(newMappedProps);
+            this.setState(cloneDeep(newMappedProps));
           }
         });
       }

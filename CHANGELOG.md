@@ -90,3 +90,6 @@ v1.3.9
 
 v1.4.0
 - added Promises to Simplex.init
+
+v.1.4.5
+- Optimization

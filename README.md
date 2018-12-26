@@ -1,10 +1,6 @@
 # react-simplex
 React storage
 
-
- [github](https://github.com/bumkaka/react-simplex)
-
-
 # Install:
 ```
 npm i --save react-simplex
