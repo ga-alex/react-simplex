@@ -26,7 +26,7 @@
   "homepage": "https://github.com/bumkaka/react-simplex#readme",
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
-    "underscore": "^1.9.1"
+    "underscore": "^1.10.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
