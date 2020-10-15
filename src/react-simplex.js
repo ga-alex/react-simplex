@@ -215,14 +215,16 @@ const { Simplex, SimplexConnect, SimplexStorage, SimplexMapToProps, Storage } = 
     }
 
     class Connected extends React.Component {
-      constructor() {
-        super();
-        let newMappedProps = MapStorageToPropsFunction(Simplex.Storage, this.props);
+      constructor(props) {
+        super(props);
+        const p = props || this.props; //React update capability
+
+        let newMappedProps = MapStorageToPropsFunction(Simplex.Storage, props);
         this.state = cloneDeep(newMappedProps);
         this.key = Key();
 
         Simplex.onChange(GLOBAL_EVENT_NAME + '.' + this.key, (storage) => {
-          let newMappedProps = MapStorageToPropsFunction(Simplex.Storage, this.props, this.state);
+          let newMappedProps = MapStorageToPropsFunction(Simplex.Storage, props, this.state);
           // newMappedProps = cloneDeep(newMappedProps);
           if (!_.isEqual(this.state, newMappedProps)) {
             this.setState(cloneDeep(newMappedProps));

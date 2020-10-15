@@ -296,17 +296,19 @@ var _ref = function () {
     function (_React$Component) {
       _inherits(Connected, _React$Component);
 
-      function Connected() {
+      function Connected(props) {
         var _this4;
 
         _classCallCheck(this, Connected);
 
-        _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Connected).call(this));
-        var newMappedProps = MapStorageToPropsFunction(Simplex.Storage, _this4.props);
+        _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Connected).call(this, props));
+        var p = props || _this4.props; //React update capability
+
+        var newMappedProps = MapStorageToPropsFunction(Simplex.Storage, props);
         _this4.state = cloneDeep(newMappedProps);
         _this4.key = Key();
         Simplex.onChange(GLOBAL_EVENT_NAME + '.' + _this4.key, function (storage) {
-          var newMappedProps = MapStorageToPropsFunction(Simplex.Storage, _this4.props, _this4.state); // newMappedProps = cloneDeep(newMappedProps);
+          var newMappedProps = MapStorageToPropsFunction(Simplex.Storage, props, _this4.state); // newMappedProps = cloneDeep(newMappedProps);
 
           if (!_.isEqual(_this4.state, newMappedProps)) {
             _this4.setState(cloneDeep(newMappedProps));
