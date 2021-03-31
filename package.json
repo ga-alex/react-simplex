@@ -26,7 +26,7 @@
   "homepage": "https://github.com/ga-alex/react-simplex#readme",
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
