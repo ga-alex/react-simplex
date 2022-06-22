@@ -59,7 +59,7 @@
     "gulp-inject-string": "^1.1.1",
     "gulp-minify": "3.1.0",
     "gulp-rename": "^1.4.0",
-    "jsdom": "^12.1.0",
+    "jsdom": "^16.5.0",
     "mocha": "^5.2.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
